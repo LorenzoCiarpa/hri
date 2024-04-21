@@ -1,6 +1,11 @@
 import pyaudio
 import wave
 import keyboard
+import os
+import sys
+
+project_folder = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+sys.path.append(project_folder)
 
 FORMAT = pyaudio.paInt16  # Formato dei dati audio
 CHANNELS = 2

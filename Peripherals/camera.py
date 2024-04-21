@@ -1,5 +1,10 @@
 import cv2
 import time
+import os
+import sys
+
+project_folder = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+sys.path.append(project_folder)
 
 def captureVideo(max_duration=None, filename='./media/output.avi'):
     cap = cv2.VideoCapture(0)
