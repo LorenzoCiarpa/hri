@@ -1,9 +1,15 @@
-from dbConnection import cursor
+import os
+import sys
+
+project_folder = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+sys.path.append(project_folder)
+
+from Memory.dbConnection import cursor, dbConnection
 
 def getUser(username):
 
     # Eseguire una query
-    query = "SELECT * FROM users WHERE username = %s"
+    query = "SELECT * FROM user WHERE username = %s"
     parametri = (username,)  # i parametri devono essere forniti in una tupla
 
     cursor.execute(query, parametri)
@@ -13,6 +19,26 @@ def getUser(username):
 
     return result
 
+def createUser(username):
+
+    # Eseguire una query
+    query = "INSERT ignore INTO user (username) values (%s)"
+    parametri = (username,)  # i parametri devono essere forniti in una tupla
+
+    cursor.execute(query, parametri)
+    dbConnection.commit()
+
+    new_account = True
+    if cursor.lastrowid == 0:
+        new_account = False
+    
+    return {
+            'success': True,
+            'new_account': new_account
+        }
+
 if __name__ == "__main__":
-    user = getUser("buitre")
-    print(f"user: {user}")
+    # user = getUser("buitr")
+    # print(f"user: {user}")
+
+    createUser("buitr")

@@ -1,11 +1,17 @@
 import mysql.connector
-from config import dbConfig
+import os
+import sys
+
+project_folder = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+sys.path.append(project_folder)
+
+from Memory.config import dbConfig
 
 # Stabilire la connessione
-conn = mysql.connector.connect(**dbConfig)
+dbConnection = mysql.connector.connect(**dbConfig)
 
 # Creare un cursore
-cursor = conn.cursor(dictionary=True)
+cursor = dbConnection.cursor(dictionary=True)
 
 
 
