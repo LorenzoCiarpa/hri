@@ -7,6 +7,7 @@ project_folder = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.append(project_folder)
 
 from Memory.queries import *
+from Knowledge.tris import *
 
 app = Flask(__name__)
 CORS(app)
@@ -26,6 +27,25 @@ def get_data():
 
     
     return jsonify({'success': True, 'message': message})  # Return JSON response
+
+@app.route('/api/makeMove', methods=['POST'])
+def makeMove():
+    data = request.json
+    boardGame = data['boardGame']
+
+    aiMove = find_best_move(boardGame)
+    
+    return jsonify({'success': True, 'boardGame': boardGame, 'aiMove': aiMove})  # Return JSON response
+
+@app.route('/api/setResultMatch', methods=['POST'])
+def setResultMatch():
+    data = request.json  # Get JSON data sent to the server
+    username = data['username']
+    winner = data['winner']
+
+    result = setWinner(username, winner)
+
+    return jsonify(result)  # Return JSON response
 
 
 

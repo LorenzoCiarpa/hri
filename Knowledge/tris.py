@@ -1,5 +1,49 @@
+import random
+
+board = [None] * 9
+# board[0] = 'X'
+# board[1] = 'X'
+# board[2] = 'O'
+# board[3] = 'O'
+# board[4] = 'O'
+# board[5] = 'X'
+# board[6] = 'X'
+# board[7] = 'O'
+# board[8] = 'X'
+
+
+AI = 'X'    # AI's marker
+HUMAN = 'O' # Human's marker
+scores = {AI: 1, HUMAN: -1, None: 0}  # Score values for minimax algorithm
+winningCombinations = [
+        [0, 1, 2], [3, 4, 5], [6, 7, 8], 
+        [0, 3, 6], [1, 4, 7], [2, 5, 8], 
+        [0, 4, 8], [2, 4, 6]            
+    ]
+
+def check_winner(board):
+    winner = None 
+    for i in range(len(winningCombinations)):
+        [a, b, c] = winningCombinations[i]
+        if board[a] is not None and board[a] == board[b] and board[a] == board[c]:
+            winner = board[a]
+            break
+    return winner
+
+def make_move(board, move, actor):
+    board[move] = actor
+    return
+
+def undo_move(board, move):
+    board[move] = None
+    return
+
+def get_available_moves(board):
+    return [index for index in range(len(board)) if board[index] is None]
+
 def minimax(board, depth, is_maximizing):
     winner = check_winner(board)
+    # print(f'board: {board}, depth: {depth}, is_maximizing: {is_maximizing} winner: {winner}')
     if winner is not None or depth == 0:
         return scores[winner]
 
@@ -20,7 +64,20 @@ def minimax(board, depth, is_maximizing):
             best_score = min(score, best_score)
         return best_score
 
+def check_first_move(board):
+    counter = 0
+    for elem in board:
+        if elem is None:
+            counter += 1
+    if counter == 9:
+        return True
+    
+    return False
+
 def find_best_move(board):
+    if check_first_move(board) is True:
+        return random.randint(0, 8)
+    
     best_score = float('-inf')
     best_move = None
     for move in get_available_moves(board):
@@ -32,8 +89,8 @@ def find_best_move(board):
             best_move = move
     return best_move
 
-# Example usage
-board = [None] * 9  # A list to represent the 3x3 board
-AI = 'X'    # AI's marker
-HUMAN = 'O' # Human's marker
-scores = {AI: 1, HUMAN: -1, None: 0}  # Score values for minimax algorithm
+
+if __name__ == "__main__":
+    # print(check_winner(board))
+    # print(f'available: {get_available_moves(board)}')
+    print(find_best_move(board))

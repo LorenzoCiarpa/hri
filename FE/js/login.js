@@ -26,6 +26,13 @@ document.getElementById('loginForm').addEventListener('submit', async function(e
         document.getElementById('message').textContent = data.message;
         document.getElementById('message').style.color = 'red';
 
+        // Set item
+        sessionStorage.setItem('username', username);
+
+        // // Remove item
+        
+
+
         await sleep(1000)
 
         loginContainer.style.display = 'none';

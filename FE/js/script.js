@@ -2,14 +2,40 @@ function sleep(ms) {
     return new Promise(resolve => setTimeout(resolve, ms));
 }
 
-let initBoardGame = [null, null, null, null, null, null, null, null, null]
-let boardGame = initBoardGame
+function initBoardGame(){
+    return [null, null, null, null, null, null, null, null, null]
+}
+
+function setWinner(winner){
+    var apiUrl = 'http://127.0.0.1:5000/api/setResultMatch';
+    // Get item
+    let username = sessionStorage.getItem('username');
+
+    fetch(apiUrl, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ 
+            username: username,
+            winner: winner
+        })//TODO change username
+    })
+    .then(response => response.json())
+    .catch(error => {
+        console.error('Error:', error);
+    });
+}
+
+let boardGame = initBoardGame()
 
 document.addEventListener('DOMContentLoaded', () => {
     const board = document.getElementById('tic-tac-toe-board');
     const undoButton = document.getElementById('undo');
     const restartButton = document.getElementById('restart');
     const closeButton = document.getElementById('close');
+    const game = document.getElementById("game-container")
+    const loginContainer = document.getElementsByClassName('login-container')[0]
 
     let moves = [];
     let currentPlayer = 'O';
@@ -34,9 +60,19 @@ document.addEventListener('DOMContentLoaded', () => {
             if (board.children[a].textContent && board.children[a].textContent === board.children[b].textContent && board.children[a].textContent === board.children[c].textContent) {
                 gameActive = false;
                 drawLine(i); // Funzione per disegnare la linea
+                setWinner(board.children[a].textContent == 'X' ? 'AI' : 'HUMAN')
                 return;
             }
         }
+    }
+
+    function checkForDraw() {
+        console.log(boardGame)
+        for (let i = 0; i < 9; i++){
+            if (boardGame[i] == null) return;
+        }
+
+        setWinner('DRAW')
     }
 
     function drawLine(index) {
@@ -74,9 +110,15 @@ document.addEventListener('DOMContentLoaded', () => {
         .then(response => response.json())
         .then(async (data) => {
             aiMove = data.aiMove;
-            board.children[aiMove].textContent = 'X';
-            moves.push(index);
-            boardGame[index] = 'X'
+            if (aiMove != null){
+                board.children[aiMove].textContent = 'X';
+                moves.push(aiMove);
+                boardGame[aiMove] = 'X'
+            }
+            
+
+            checkForWin()
+            checkForDraw()
 
         })
         .catch(error => {
@@ -97,15 +139,17 @@ document.addEventListener('DOMContentLoaded', () => {
         boardGame[lastMove] = null
         board.children[lastMove].textContent = '';
 
-        gameActive = true;
         // Rimuovi eventuali linee disegnate
         let line = board.querySelector('.line');
         if (line) line.remove();
+
+        gameActive = true;
+
     });
 
     restartButton.addEventListener('click', () => {
         moves = [];
-        boardGame = initBoardGame;
+        boardGame = initBoardGame();
         gameActive = true;
         Array.from(board.children).forEach(cell => {
             if (cell.className !== 'line') cell.textContent = '';
@@ -116,8 +160,15 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     closeButton.addEventListener('click', () => {
-        board.innerHTML = '';
-        document.getElementById('game-container').remove();
+        boardGame = initBoardGame();
+        moves = [];
+        for (let i = 0; i < board.children.length; i++){
+            board.children[i].textContent = '';
+        }
+        document.getElementById('message').textContent = '';
+        sessionStorage.removeItem('username');
+        game.style.display = 'none';
+        loginContainer.style.display = 'block';
     });
 });
 
