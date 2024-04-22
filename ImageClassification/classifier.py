@@ -1,14 +1,16 @@
 from keras.models import load_model  # TensorFlow is required for Keras to work
-import keras
 from PIL import Image, ImageOps  # Install pillow instead of PIL
 import numpy as np
+import os
+file_relative_path = 'keras_model.h5'
+file_absolute_path = os.path.abspath(file_relative_path)
 
 # Disable scientific notation for clarity
 np.set_printoptions(suppress=True)
-#model_path = r'"C:\Users\Luca\HRI\hri\ImageClassification\keras_model.h5"'
+model_path = r'"C:\Users\Luca\HRI\hri\ImageClassification\keras_model.h5"'
 # Load the model
-#model = load_model(model_path, compile=False)
-keras.layers.TFSMLayer("C:\Users\Luca\HRI\hri\ImageClassification\keras_model.h5", call_endpoint='serving_default')
+model = load_model(file_relative_path, compile=False)
+
 # Load the labels
 class_names = open("labels.txt", "r").readlines()
 
@@ -18,7 +20,7 @@ class_names = open("labels.txt", "r").readlines()
 data = np.ndarray(shape=(1, 224, 224, 3), dtype=np.float32)
 
 # Replace this with the path to your image
-image = Image.open("<IMAGE_PATH>").convert("RGB")
+image = Image.open("prova_shoot.jpg").convert("RGB")
 
 # resizing the image to be at least 224x224 and then cropping from the center
 size = (224, 224)
