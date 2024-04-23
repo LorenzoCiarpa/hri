@@ -54,8 +54,77 @@ def setWinner(username, winner):
             'success': True
         }
 
+def checkLevelQuery(username):
+
+    # Eseguire una query
+    query = '''
+    SELECT 
+        SUM(CASE WHEN winner = 'AI' THEN 1 ELSE 0 END) AS AI_wins,
+        SUM(CASE WHEN winner = 'HUMAN' THEN 1 ELSE 0 END) AS human_wins,
+        SUM(CASE WHEN winner = 'DRAW' THEN 1 ELSE 0 END) AS draw
+    FROM 
+        tris_match
+    WHERE 
+        idUser = (SELECT idUser from user where username = %s);
+    '''
+    parametri = (username,)  # i parametri devono essere forniti in una tupla
+
+    cursor.execute(query, parametri)
+    # Ottenere i risultati
+    result = cursor.fetchall()
+
+    return result
+
+def getLevel(username):
+
+    # Eseguire una query
+    query = '''
+    SELECT 
+        level 
+    FROM 
+        tris_instance 
+    WHERE 
+        idUser = (SELECT idUser from user where username = %s)
+    '''
+    parametri = (username,)  # i parametri devono essere forniti in una tupla
+
+    cursor.execute(query, parametri)
+
+    # Ottenere i risultati
+    result = cursor.fetchall()
+
+    return result
+
+def setLevel(username, level):
+
+    
+    query = '''
+    INSERT INTO tris_instance
+        (idUser, level) 
+    values 
+        ((SELECT idUser FROM user WHERE username = %s), %s)
+    ON DUPLICATE KEY
+    UPDATE
+        level = %s
+    '''
+    # Eseguire una query
+    
+    parametri = (username, level, level,)  # i parametri devono essere forniti in una tupla
+
+    cursor.execute(query, parametri)
+    # Ottenere i risultati
+    dbConnection.commit()
+
+
+    return True
+    
+
 if __name__ == "__main__":
     # user = getUser("buitr")
     # print(f"user: {user}")
 
-    createUser("buitr")
+    # createUser("buitr")
+    # res = checkLevel('b')
+    res = setLevel('b', 'PRO')
+    # res = getLevel('b')
+    print(res)

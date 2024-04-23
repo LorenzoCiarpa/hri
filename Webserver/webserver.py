@@ -8,6 +8,7 @@ sys.path.append(project_folder)
 
 from Memory.queries import *
 from Knowledge.tris import *
+from Utils.constants import *
 
 app = Flask(__name__)
 CORS(app)
@@ -47,6 +48,35 @@ def setResultMatch():
 
     return jsonify(result)  # Return JSON response
 
+@app.route('/api/checkLevel', methods=['POST'])
+def checkLevel():
+    data = request.json  # Get JSON data sent to the server
+    username = data['username']
+
+    levels = checkLevelQuery(username)
+
+
+    result = {
+        'success': True
+    }
+    print(levels)
+
+    if len(levels) == 0:
+        result['level'] = 'beginner'
+        return result
+    
+    ai_wins = levels[0]['AI_wins']
+    human_wins = levels[0]['human_wins']
+    ratio = human_wins / ai_wins
+
+    if ratio >=PRO_RATIO:
+        setLevel(username, 'PRO')
+    elif ratio >= INTERMEDIATE_RATIO:
+        setLevel(username, 'INTERMEDIATE')
+    else:
+        setLevel(username, 'BEGINNER')
+
+    return jsonify(result)  # Return JSON response
 
 
 if __name__ == '__main__':

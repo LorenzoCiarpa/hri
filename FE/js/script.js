@@ -29,6 +29,12 @@ function setWinner(winner){
 
 let boardGame = initBoardGame()
 
+const winningCombinations = [
+    [0, 1, 2], [3, 4, 5], [6, 7, 8], // Orizzontali
+    [0, 3, 6], [1, 4, 7], [2, 5, 8], // Verticali
+    [0, 4, 8], [2, 4, 6]            // Diagonali
+];
+
 document.addEventListener('DOMContentLoaded', () => {
     const board = document.getElementById('tic-tac-toe-board');
     const undoButton = document.getElementById('undo');
@@ -48,11 +54,7 @@ document.addEventListener('DOMContentLoaded', () => {
         board.appendChild(cell);
     }
 
-    const winningCombinations = [
-        [0, 1, 2], [3, 4, 5], [6, 7, 8], // Orizzontali
-        [0, 3, 6], [1, 4, 7], [2, 5, 8], // Verticali
-        [0, 4, 8], [2, 4, 6]            // Diagonali
-    ];
+    
 
     function checkForWin() {
         for (let i = 0; i < winningCombinations.length; i++) {
@@ -165,8 +167,11 @@ document.addEventListener('DOMContentLoaded', () => {
         for (let i = 0; i < board.children.length; i++){
             board.children[i].textContent = '';
         }
+        gameActive = True;
         document.getElementById('message').textContent = '';
         sessionStorage.removeItem('username');
+        let line = board.querySelector('.line');
+        if (line) line.remove();
         game.style.display = 'none';
         loginContainer.style.display = 'block';
     });
