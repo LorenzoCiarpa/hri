@@ -7,3 +7,5 @@ LEVELS = {
 }
 
 INTERMIDIATE_RANDOM = 0.5
+
+PATH_FACE = './face.jpg'

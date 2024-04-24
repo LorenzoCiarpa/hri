@@ -1,2 +1,2 @@
-def say():
+def say(message):
     return

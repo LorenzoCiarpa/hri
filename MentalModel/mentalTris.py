@@ -7,6 +7,8 @@ sys.path.append(project_folder)
 
 from Utils.constants import *
 from Robot.say import *
+from Peripherals.camera import getInstantShot
+from EmotionRecognition.imageEmotionRecognition import getEmotionFromImg
 
 class TrisInteractionHandler():
 
@@ -14,43 +16,47 @@ class TrisInteractionHandler():
         pass
 
     def levelChange(self, curr_level, new_level):
-
+        
+        message = ''
         if LEVELS[curr_level] < LEVELS[new_level]:
-            #leveled up
-            print()
-            say("Great you are improving a lot! \n I will try to be better!")
-
+            message = "Great you are improving a lot! \n I will try to be better!"
         elif LEVELS[curr_level] > LEVELS[new_level]:
-            #leveled down
-            print()
-            say("It seems like you still have to learn a lot... \n I will try to be softer!")
-
+            message = "It seems like you still have to learn a lot... \n I will try to be softer!"
         else:
-            #not changed
-            print()
-            say("Still a draw... Let's do another match!")
+            # message = "Still a draw... Let's do another match!"
+            message = ""
+
+        say(message)
+        print(message)
         return
     
     def endMatch(self, winner): 
         emotion = self.handleEmotion()
-
+        print(f'emotion: {emotion}')
+        message = ''
         if emotion == 'sad':
-            say("Oh no my friend, don't be sad, we can do a re-match!")
+            message = "Oh no my friend, don't be sad, we can do a re-match!"
             #decreaseLevel(username)
         elif emotion == 'happy':
-            say("Are you fooling me?! let's see if you are able to beat me now!")
+            message = "Are you fooling me?! let's see if you are able to beat me now!"
             #increaseLevel(username)
         elif emotion == 'angry':
-            say("Don't be angry, we can still play!")
-        elif emotion == 'neutral':
-            say("")
+            message = "Don't be angry, we can still play!"
+        else: #could be neutral, fear, surprise, disgust
+            message = ""
+
+        say(message)
+        print(message)
 
         if winner == 'AI':
-            say("I won!")
+            message = "I won!"
         elif winner == 'HUMAN':
-            say("Oh no i lost!")
+            message = "Oh no i lost!"
         else:
-            say("Another Draw...")
+            message = "Another Draw..."
+
+        say(message)
+        print(message)
         return
     
     def newUser(self, username):
@@ -58,5 +64,14 @@ class TrisInteractionHandler():
         return
     
     def handleEmotion(self):
-        return
+        
+        # getInstantShot(PATH_FACE)
+        emotion = getEmotionFromImg(PATH_FACE)
+        return emotion
 
+if __name__ == '__main__':
+    trisHandler = TrisInteractionHandler()
+    # emotion = trisHandler.handleEmotion()
+    # print(f'emotion: {emotion}')
+
+    trisHandler.endMatch('AI')

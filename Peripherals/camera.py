@@ -57,6 +57,28 @@ def captureSingleImage():
 
     return
 
+def getInstantShot(path):
+    cap = cv2.VideoCapture(0)
+
+    counter = 0
+    while True:
+        ret, frame = cap.read()
+        if not ret:
+            continue
+
+        counter += 1
+        if counter < 2:
+            continue
+
+        cv2.imwrite(path, frame)
+        break
+            
+    cap.release()
+    cv2.destroyAllWindows()
+
+    return
+
+
 def captureMultipleImages():
     cap = cv2.VideoCapture(0)
     frame_counter = 0
@@ -82,5 +104,6 @@ def captureMultipleImages():
     return
 
 if __name__ == '__main__':
-    captureSingleImage()
-# captureVideo(10)
+    # captureVideo(10)
+    # captureSingleImage()
+    getInstantShot()
