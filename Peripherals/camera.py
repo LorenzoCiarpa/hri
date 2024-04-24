@@ -81,4 +81,6 @@ def captureMultipleImages():
     cv2.destroyAllWindows()
     return
 
+if __name__ == '__main__':
+    captureSingleImage()
 # captureVideo(10)
