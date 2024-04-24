@@ -1,3 +1,9 @@
+const LEVELS = {
+    'BEGINNER': 0,
+    'INTERMEDIATE': 1,
+    'PRO': 2
+}
+
 function sleep(ms) {
     return new Promise(resolve => setTimeout(resolve, ms));
 }
@@ -22,6 +28,39 @@ function setWinner(winner){
         })//TODO change username
     })
     .then(response => response.json())
+    .catch(error => {
+        console.error('Error:', error);
+    });
+}
+
+function checkLevel(){
+    var apiUrl = 'http://127.0.0.1:5000/api/checkLevel';
+    let username = sessionStorage.getItem('username');
+
+    fetch(apiUrl, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ 
+            username: username
+        })//TODO change username
+    })
+    .then(response => response.json())
+    .then(response => {
+        let level = response['level']
+        let change = response['change']
+        
+        if(change == 'not_changed') return;
+        
+        let curr_level = sessionStorage.getItem('level');
+        if (LEVELS[curr_level] < LEVELS[level]) console.log('congrats, u leveled up')
+        else console.log("not great, u leveled down")
+
+        //TODO make changes
+        sessionStorage.setItem('level', level);
+        
+    })
     .catch(error => {
         console.error('Error:', error);
     });
@@ -63,9 +102,10 @@ document.addEventListener('DOMContentLoaded', () => {
                 gameActive = false;
                 drawLine(i); // Funzione per disegnare la linea
                 setWinner(board.children[a].textContent == 'X' ? 'AI' : 'HUMAN')
-                return;
+                return true;
             }
         }
+        return false;
     }
 
     function checkForDraw() {
@@ -100,6 +140,7 @@ document.addEventListener('DOMContentLoaded', () => {
         boardGame[index] = currentPlayer
 
         var apiUrl = 'http://127.0.0.1:5000/api/makeMove';
+        let username = sessionStorage.getItem('username')
 
 
         fetch(apiUrl, {
@@ -107,10 +148,12 @@ document.addEventListener('DOMContentLoaded', () => {
             headers: {
                 'Content-Type': 'application/json',
             },
-            body: JSON.stringify({ boardGame: boardGame })
+            body: JSON.stringify({ boardGame: boardGame, username: username})
         })
         .then(response => response.json())
         .then(async (data) => {
+            if (checkForWin()) return;
+
             aiMove = data.aiMove;
             if (aiMove != null){
                 board.children[aiMove].textContent = 'X';
@@ -150,6 +193,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     restartButton.addEventListener('click', () => {
+        checkLevel()
         moves = [];
         boardGame = initBoardGame();
         gameActive = true;

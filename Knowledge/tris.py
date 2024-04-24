@@ -89,6 +89,11 @@ def find_best_move(board):
             best_move = move
     return best_move
 
+def choose_random_move(board):
+    available_moves = get_available_moves(board)
+    available_moves = available_moves if len(available_moves) >= 0 else 0
+    ranodm_move = random.randint(0, len(available_moves) - 1) 
+    return available_moves[ranodm_move]
 
 if __name__ == "__main__":
     # print(check_winner(board))

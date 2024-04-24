@@ -3,6 +3,31 @@ function sleep(ms) {
 }
 
 
+function getLevel(){
+    var apiUrl = 'http://127.0.0.1:5000/api/getLevel';
+    let username = sessionStorage.getItem('username');
+
+    fetch(apiUrl, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ 
+            username: username
+        })//TODO change username
+    })
+    .then(response => response.json())
+    .then(response => {
+        console.log("level, ", response)
+        //TODO make changes
+        sessionStorage.setItem('level', response);
+        
+    })
+    .catch(error => {
+        console.error('Error:', error);
+    });
+}
+
 game = document.getElementById("game-container")
 loginContainer = document.getElementsByClassName('login-container')[0]
 loginForm = document.getElementById('loginForm')
@@ -22,23 +47,7 @@ document.getElementById('loginForm').addEventListener('submit', async function(e
     })
     .then(response => response.json())
     .then(async (data) => {
-        var apiUrl = 'http://127.0.0.1:5000/api/checkLevel';
-
-        fetch(apiUrl, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({ username: username })
-        })
-        .then(response => response.json())
-        .then(async (data) => {
-            console.log("Result checkLevel ", result)
-        })
-        .catch(error => {
-            console.error('Error:', error);
-        });
-
+        getLevel()
         console.log("ok")
         document.getElementById('message').textContent = data.message;
         document.getElementById('message').style.color = 'red';

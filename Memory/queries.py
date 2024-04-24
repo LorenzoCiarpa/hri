@@ -22,15 +22,33 @@ def getUser(username):
 def createUser(username):
 
     # Eseguire una query
-    query = "INSERT ignore INTO user (username) values (%s)"
-    parametri = (username,)  # i parametri devono essere forniti in una tupla
+    query = '''
+    INSERT ignore INTO user 
+        (username) 
+    values 
+        (%s);
+    '''
+    parametri = (username, )  # i parametri devono essere forniti in una tupla
 
     cursor.execute(query, parametri)
     dbConnection.commit()
 
     new_account = True
+    print(cursor)
     if cursor.lastrowid == 0:
         new_account = False
+
+    query = '''
+    INSERT ignore INTO tris_instance 
+        (idUser, level) 
+    values 
+        ((SELECT idUser FROM user where username = %s), 'BEGINNER');
+    '''
+
+    parametri = (username, )  # i parametri devono essere forniti in una tupla
+
+    cursor.execute(query, parametri)
+    dbConnection.commit()
     
     return {
             'success': True,
@@ -54,7 +72,7 @@ def setWinner(username, winner):
             'success': True
         }
 
-def checkLevelQuery(username):
+def getMatches(username):
 
     # Eseguire una query
     query = '''
@@ -115,9 +133,17 @@ def setLevel(username, level):
     # Ottenere i risultati
     dbConnection.commit()
 
+    # Controlla se è stata inserita una nuova riga o aggiornata una esistente
+    if cursor.rowcount == 0:
+        print("Nothing changed")
+        return 'not_changed'
+    if cursor.rowcount == 1:
+        print("Inserita una nuova riga.")
+        return 'created'
+    elif cursor.rowcount == 2:
+        print("Aggiornata una riga esistente.")
+        return 'changed'
 
-    return True
-    
 
 if __name__ == "__main__":
     # user = getUser("buitr")
@@ -125,6 +151,7 @@ if __name__ == "__main__":
 
     # createUser("buitr")
     # res = checkLevel('b')
-    res = setLevel('b', 'PRO')
+    # res = setLevel('b', 'PRO')
     # res = getLevel('b')
+    res = getMatches('b')
     print(res)

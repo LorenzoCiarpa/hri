@@ -5,3 +5,5 @@ pyaudio
 numpy
 keyboard
 flask-cors
+deepface
+tf-keras
