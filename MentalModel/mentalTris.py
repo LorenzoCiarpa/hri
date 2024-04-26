@@ -8,7 +8,7 @@ sys.path.append(project_folder)
 from Utils.constants import *
 from Robot.say import *
 from Peripherals.camera import getInstantShot
-from EmotionRecognition.imageEmotionRecognition import getEmotionFromImg
+from EmotionRecognition.imageEmotionRecognition import getEmotionFromImg, getEmotionFromImgFer
 
 class TrisInteractionHandler():
 
@@ -65,8 +65,9 @@ class TrisInteractionHandler():
     
     def handleEmotion(self):
         
-        # getInstantShot(PATH_FACE)
+        getInstantShot(PATH_FACE)
         emotion = getEmotionFromImg(PATH_FACE)
+        emotion = getEmotionFromImgFer(PATH_FACE)
         return emotion
 
 if __name__ == '__main__':
