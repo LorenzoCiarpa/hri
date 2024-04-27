@@ -34,7 +34,6 @@ def createUser(username):
     dbConnection.commit()
 
     new_account = True
-    print(cursor)
     if cursor.lastrowid == 0:
         new_account = False
 
@@ -64,6 +63,20 @@ def setWinner(username, winner):
     values 
         ((SELECT idUser FROM user WHERE username = %s), %s)'''
     parametri = (username, winner)  # i parametri devono essere forniti in una tupla
+
+    cursor.execute(query, parametri)
+    dbConnection.commit()
+
+    query = f"""
+    UPDATE 
+        tris_instance
+    SET 
+        {winner.lower()} = {winner.lower()} + 1 
+    WHERE 
+        idUser = (SELECT idUser FROM user WHERE username = %s);
+    """
+    
+    parametri = (username, )  # i parametri devono essere forniti in una tupla
 
     cursor.execute(query, parametri)
     dbConnection.commit()
@@ -144,6 +157,70 @@ def setLevel(username, level):
         print("Aggiornata una riga esistente.")
         return 'changed'
 
+def getAngerLevel(username):
+    # Eseguire una query
+    query = '''
+    SELECT 
+        angerCounter 
+    FROM 
+        tris_instance 
+    WHERE 
+        idUser = (SELECT idUser from user where username = %s)
+    '''
+    parametri = (username,)  # i parametri devono essere forniti in una tupla
+
+    cursor.execute(query, parametri)
+
+    # Ottenere i risultati
+    result = cursor.fetchall()
+
+    return result
+    
+
+def setAngerCounter(username, newAngerCounter):
+    query = '''
+    UPDATE 
+        tris_instance
+    SET 
+        angerCounter = %s
+    WHERE
+        idUser = (SELECT idUser FROM user WHERE username = %s)
+    '''
+    # Eseguire una query
+    
+    parametri = (newAngerCounter, username,)  # i parametri devono essere forniti in una tupla
+
+    cursor.execute(query, parametri)
+    # Ottenere i risultati
+    dbConnection.commit()
+    
+    return
+
+def deleteRecordForNewLevel(username, ratio):
+    query = """
+        call deleteRecordForNewLevel(%s, %s)
+    """
+
+    parametri = (username, ratio,)  # i parametri devono essere forniti in una tupla
+
+    cursor.execute(query, parametri)
+    # Ottenere i risultati
+    dbConnection.commit()
+
+    return
+
+def createRecordForNewLevel(username, ratio):
+    query = """
+        call createRecordForNewLevel(%s, %s);
+    """
+
+    parametri = (username, ratio,)  # i parametri devono essere forniti in una tupla
+
+    cursor.execute(query, parametri)
+    # Ottenere i risultati
+    dbConnection.commit()
+
+
 
 if __name__ == "__main__":
     # user = getUser("buitr")
@@ -153,5 +230,8 @@ if __name__ == "__main__":
     # res = checkLevel('b')
     # res = setLevel('b', 'PRO')
     # res = getLevel('b')
-    res = getMatches('b')
-    print(res)
+    # res = getMatches('b')
+    # print(res)
+
+    # deleteRecordForNewLevel('b', 3)
+    setWinner('b', 'AI')

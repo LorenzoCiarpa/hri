@@ -1,6 +1,6 @@
 # import torch
 # print(torch.cuda.is_available())
-# import numpy as np
+import numpy as np
 # rng = np.random.default_rng(123)
 
 # print(rng.integers(low=0, high=5))
@@ -40,3 +40,4 @@
 # plt.imshow(img)
 # plt.show()
 # time.sleep(5)
+print(np.random.uniform(low=8, high=2))

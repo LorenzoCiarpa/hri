@@ -13,7 +13,7 @@ def getEmotionFromImgFer(path):
 
     # Detect emotions
     emotions = detector.detect_emotions(img)
-    # print(emotions)
+    print(emotions)
 
     if len(emotions) == 0:
         return 'neutral'

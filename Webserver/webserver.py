@@ -10,6 +10,9 @@ sys.path.append(project_folder)
 from Memory.queries import *
 from Knowledge.tris import *
 from Utils.constants import *
+from MentalModel.mentalTris import *
+
+trisHandler = TrisInteractionHandler()
 
 app = Flask(__name__)
 CORS(app)
@@ -45,7 +48,7 @@ def makeMove():
     if level == 'BEGINNER':
         aiMove = choose_random_move(boardGame)
     elif level == 'INTERMEDIATE':
-        if random.uniform(0, 1) < INTERMIDIATE_RANDOM:
+        if random.uniform(0, 1) < INTERMEDIATE_RANDOM:
             aiMove = choose_random_move(boardGame)
             print(f"random move: {aiMove}")
     
@@ -61,6 +64,8 @@ def setResultMatch():
 
     result = setWinner(username, winner)
 
+    trisHandler.endMatch(winner, username)
+
     return jsonify(result)  # Return JSON response
 
 @app.route('/api/checkLevel', methods=['POST'])
@@ -69,7 +74,7 @@ def checkLevel():
     username = data['username']
     print(f"username: {username}")
     matches = getMatches(username)
-    level = getLevel(username)
+    level = getLevel(username)[0]['level']
 
     result = {
         'success': True
@@ -110,6 +115,9 @@ def checkLevel():
     result['level'] = new_level
     result['change'] = response
 
+    
+    trisHandler.levelChange(level, new_level)
+
     return jsonify(result)  # Return JSON response
 
 @app.route('/api/getLevel', methods=['POST'])
@@ -121,4 +129,4 @@ def getLevelApi():
 
 
 if __name__ == '__main__':
-    app.run(debug=True, port=5000)  # Run the server
+    app.run(debug=True, use_reloader=False, port=5000)  # Run the server
