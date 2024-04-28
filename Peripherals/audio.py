@@ -28,6 +28,7 @@ def recordAudio(max_duration, filename="./media/file_output.wav"):
         data = stream.read(CHUNK)
         frames.append(data)
 
+        # Comment this line if used on linux
         if keyboard.is_pressed('q'):  # Controlla se il tasto 'q' è stato premuto
             print("Registrazione interrotta")
             break
@@ -48,4 +49,4 @@ def recordAudio(max_duration, filename="./media/file_output.wav"):
     wf.close()
     return 
 
-recordAudio(10)
+recordAudio(3)

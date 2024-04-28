@@ -59,8 +59,16 @@ class ShootGame():
         return self.moves
 
     def turn(self):
-        humanMove = self.getHumanMove()
         aiMove = self.getAiMove()
+
+        socketMessage = {
+            'action': aiMove
+        }
+
+        self.mentalModel.sendMessageSocket(socketMessage)
+        self.mentalModel.readMessageSocket()
+
+        humanMove = self.getHumanMove()
 
         aiActor = {
             'name': 'ai',
