@@ -29,7 +29,9 @@ def loginUser():
 
     if result['new_account'] is False:
         message = f"Welcome back {username}"
+    
 
+    # trisHandler.newUser(message)
     
     return jsonify({'success': True, 'message': message})  # Return JSON response
 
@@ -85,7 +87,9 @@ def checkLevel():
     if len(matches) > 0:
         ai_wins = matches[0]['AI_wins']
         human_wins = matches[0]['human_wins']
-        if ai_wins == 0:
+        if ai_wins == None:
+            ratio = 1
+        elif ai_wins == 0:
             ratio = human_wins
         else:
             ratio = human_wins / ai_wins

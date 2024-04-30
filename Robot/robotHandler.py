@@ -17,7 +17,7 @@ class RobotHandler():
 
         while True:
             client_socket, addr = server_socket.accept()
-            print "Connected by", addr
+            print("Connected by", addr)
             while True:
                 received = client_socket.recv(1024)
                 if not received:

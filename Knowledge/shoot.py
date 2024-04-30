@@ -10,18 +10,21 @@ from MentalModel.mentalShoot import *
 from Peripherals.camera import getInstantShot
 from EmotionRecognition.imageEmotionRecognition import getEmotionFromImg
 from ImageClassification.moveClassifier import moveClassifier
+from Robot.robotCommunicator import robotCommunicator
+from ImageClassification.classifier import predict 
 
 MOVES = [
+    'shoot',
     'shield',
-    'charge', 
-    'shoot'
+    'charge'
+    
 ]
 
 class Actor():
     def __init__(self, name) -> None:
         self.name = name
         self.life = 3
-        self.bullets = 0
+        self.bullets = 1
         return
 
     def __str__(self) -> str:
@@ -65,8 +68,7 @@ class ShootGame():
             'action': aiMove
         }
 
-        self.mentalModel.sendMessageSocket(socketMessage)
-        self.mentalModel.readMessageSocket()
+        robotCommunicator.move(socketMessage)
 
         humanMove = self.getHumanMove()
 
@@ -85,20 +87,32 @@ class ShootGame():
         
         self.checkHit(humanActor, aiActor)
         self.checkHit(aiActor, humanActor)
+
+        if humanMove == 'shoot' and self.match['human'].bullets == 0:
+            socketMessage = {
+                'action': 'say',
+                'message': "Hey what are you doing? you can't shoot without bullets!"
+            }
+
+            robotCommunicator.say(socketMessage)
+
         
         
         return (aiActor, humanActor)
 
     def getHumanMove(self):
         # CORRECT FINAL VERSION
-        # getInstantShot(PATH_MOVE)
-        # index = moveClassifier(PATH_MOVE)
+        getInstantShot(PATH_MOVE)
+        index = predict(PATH_MOVE)
 
-        index = random.randint(0, 2)
+        # index = random.randint(0, 2)
         return MOVES[index]
     
     def getAiMove(self):
-        index = random.randint(0, 2)
+        if self.match['ai'].bullets == 0:
+            index = random.randint(1, 2)
+        else:
+            index = random.randint(0, 2)
         return MOVES[index]
     
     def setWinner(self, winner):

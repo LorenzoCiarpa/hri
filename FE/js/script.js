@@ -51,14 +51,16 @@ function checkLevel(){
         let level = response['level']
         let change = response['change']
         
-        if(change == 'not_changed') return;
+        //TODO make changes
+        
         
         let curr_level = sessionStorage.getItem('level');
+        sessionStorage.setItem('level', level);
+        
+        if(change == 'not_changed') return;
+
         if (LEVELS[curr_level] < LEVELS[level]) console.log('congrats, u leveled up')
         else console.log("not great, u leveled down")
-
-        //TODO make changes
-        sessionStorage.setItem('level', level);
         
     })
     .catch(error => {

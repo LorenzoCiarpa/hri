@@ -1,6 +1,8 @@
 import os
 import sys
 import time
+import socket
+import json
 
 project_folder = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.append(project_folder)
@@ -9,13 +11,17 @@ from Utils.constants import *
 from Memory.queries import *
 from Robot.say import *
 from Peripherals.camera import getInstantShot
-from EmotionRecognition.imageEmotionRecognition import getEmotionFromImg, getEmotionFromImgFer
+from Peripherals.audio import recordAudio
+from EmotionRecognition.imageEmotionRecognition import getEmotionFromImgFer
+from SpeechRecognition.speechRecognition import SentimentAnalysis
+from Robot.robotCommunicator import robotCommunicator
 
 class TrisInteractionHandler():
 
     def __init__(self) -> None:
+        self.sentimentAnalysis = SentimentAnalysis()
         pass
-
+    
     def levelChange(self, curr_level, new_level):
         
         message = ''
@@ -27,39 +33,75 @@ class TrisInteractionHandler():
             # message = "Still a draw... Let's do another match!"
             message = ""
 
-        say(message)
+        robotCommunicator.say(message)
         print(message)
         return
     
     def endMatch(self, winner, username): 
+        
+        emotion_from_sentiment = self.handleSentiment()
         emotion = self.handleEmotion()
-        print(f'emotion: {emotion}')
+
+        emotion_avg = (EMOTION_RATE[emotion] + EMOTION_RATE[emotion_from_sentiment]) / 2
+
+        print(f'emotion: {emotion}, avg: {emotion_avg}')
+
         message = ''
-        if emotion == 'sad':
-            message = "Oh no my friend, don't be sad, we can do a re-match! I will be softer."
-            self.decreaseLevel(username)
-        elif emotion == 'happy':
+        if emotion_avg > 3.5:
+            #happy
             message = "Are you fooling me?! let's see if you are able to beat me now!"
             self.increaseLevel(username)
-        elif emotion == 'angry':
+        elif emotion_avg > 2.5 and emotion_avg <= 3.5:
+            #neutral
+            message = ""
+        elif emotion_avg > 1.5 and emotion_avg <= 2.5:
+            #angry
             message = self.handleAnger(username)
             if message == '':
                 message = "Don't be angry, we can still play!"
-        else: #could be neutral, fear, surprise, disgust
-            message = ""
+        elif emotion_avg <= 1.5:
+            #sad
+            message = "Oh no my friend, don't be sad, we can do a re-match! I will be softer."
+            self.decreaseLevel(username)
+            
+        action = ''
+        if emotion_avg > 3.5 and winner == 'AI':
+            #happy
+            action = "strong_exultation"
+        elif emotion_avg > 2.5 and emotion_avg <= 3.5 and winner == 'AI':
+            #neutral
+            action = "exultation"
+        elif emotion_avg > 1.5 and emotion_avg <= 2.5 and winner == 'AI':
+            #angry
+            action = 'raise_hands'
+    
 
-        say(message)
+        # message = ''
+        # if emotion == 'sad':
+        #     message = "Oh no my friend, don't be sad, we can do a re-match! I will be softer."
+        #     self.decreaseLevel(username)
+        # elif emotion == 'happy':
+        #     message = "Are you fooling me?! let's see if you are able to beat me now!"
+        #     self.increaseLevel(username)
+        # elif emotion == 'angry':
+        #     message = self.handleAnger(username)
+        #     if message == '':
+        #         message = "Don't be angry, we can still play!"
+        # else: #could be neutral, fear, surprise, disgust
+        #     message = ""
+
+        if message == '':
+            if winner == 'AI':
+                message = "I won!"
+            elif winner == 'HUMAN':
+                message = "Oh no i lost!"
+            else:
+                message = "Another Draw..."
+
+        robotCommunicator.say(message)
+        robotCommunicator.move(action)
         print(message)
 
-        if winner == 'AI':
-            message = "I won!"
-        elif winner == 'HUMAN':
-            message = "Oh no i lost!"
-        else:
-            message = "Another Draw..."
-
-        say(message)
-        print(message)
         return
     
     def decreaseLevel(self, username):
@@ -101,8 +143,12 @@ class TrisInteractionHandler():
 
         return message
     
-    def newUser(self, username):
-        say(f"Welcome {username}, these are the rules of the game...")
+    def newUser(self, message):
+        message_to_send = f"""
+                {message}, these are the rules of the game: ...
+            """
+
+        robotCommunicator.say(message_to_send)
         return
     
     def handleEmotion(self):
@@ -112,6 +158,27 @@ class TrisInteractionHandler():
         emotion = getEmotionFromImgFer(PATH_FACE)
         return emotion
 
+    def handleSentiment(self):
+        recordAudio(5, PATH_AUDIO)
+        transcription = self.sentimentAnalysis.speech_to_text(PATH_AUDIO)
+        rating = self.sentimentAnalysis.analyze_sentiment(transcription)
+
+        rate = rating[0]['label']
+        print(f'rate: {rate}')
+
+        sentiment = ''
+        if SENTIMENT_RATE[rate] == 1:
+            sentiment = 'angry'
+        elif SENTIMENT_RATE[rate] == 2:
+            sentiment = 'sad'
+        elif SENTIMENT_RATE[rate] == 4:
+            sentiment = 'happy'
+        elif SENTIMENT_RATE[rate] == 5:
+            sentiment = 'happy'
+        else: # rate == 3
+            sentiment = 'neutral'
+        return sentiment
+    
 if __name__ == '__main__':
     trisHandler = TrisInteractionHandler()
     # emotion = trisHandler.handleEmotion()

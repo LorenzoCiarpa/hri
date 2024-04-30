@@ -49,4 +49,5 @@ def recordAudio(max_duration, filename="./media/file_output.wav"):
     wf.close()
     return 
 
-recordAudio(3)
+if __name__ == '__main__':
+    recordAudio(10)

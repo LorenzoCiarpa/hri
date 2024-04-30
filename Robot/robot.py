@@ -1,6 +1,7 @@
 import qi
 import time
 import math
+import sys
 
 class Robot():
     def __init__(self, port):

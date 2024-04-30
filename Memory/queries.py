@@ -48,6 +48,18 @@ def createUser(username):
 
     cursor.execute(query, parametri)
     dbConnection.commit()
+
+    query = '''
+    INSERT ignore INTO shoot_instance 
+        (idUser) 
+    values 
+        ((SELECT idUser FROM user where username = %s));
+    '''
+
+    parametri = (username, )  # i parametri devono essere forniti in una tupla
+
+    cursor.execute(query, parametri)
+    dbConnection.commit()
     
     return {
             'success': True,
