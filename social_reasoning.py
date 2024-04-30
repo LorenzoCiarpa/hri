@@ -57,9 +57,10 @@ while True:
             time.sleep(10)
 
     if status is "LOGGING":
-        robotCommunicator.move("boh qualcosa") ##da fare prima questo per attirare l'attenzione
-        time.sleep(1)
-        robotCommunicator.say("Insert your name?") #troppo difficile fare riconoscimento facciale
+        if user is None:
+            robotCommunicator.move("boh qualcosa") ##da fare prima questo per attirare l'attenzione
+            time.sleep(1)
+            robotCommunicator.say("Insert your name?") #troppo difficile fare riconoscimento facciale
         # notify fe to change screen to login
         # waiting socket to send username
         # eseguire funzioni di loginUser in webserver.py
@@ -77,16 +78,16 @@ while True:
     
     if status is "LETS PLAY":
         if selected_game is "TRIS":
-            status="PLAYING"
             # notify fe to change to tris page
             # wait for the fe to send winner
-
+            status="END GAME"
             #qua cosa ci mettiamo?
         if selected_game is "SHOOT":
             shootgame=ShootGame(user)
-            status="PLAYING"
+            shootgame.game()
+            status="END GAME"
     
-    if status is "PLAYING":
+    if status is "END GAME":
         ##gestiamo il gioco
         robotCommunicator.say("Do you wanna stop?")
         recordAudio(3, filename="./media/stop_playing.wav")
