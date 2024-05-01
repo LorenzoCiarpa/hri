@@ -19,6 +19,8 @@ else:
 
     processor_stt = Wav2Vec2Processor.from_pretrained("facebook/wav2vec2-base-960h")
     model_stt = Wav2Vec2ForCTC.from_pretrained("facebook/wav2vec2-base-960h")
+
+    #Alternative also for italian language: facebook/wav2vec2-large-xlsr-53-italian
     
     model_stt.save_pretrained('./STTModelWeights')
     processor_stt.save_pretrained('./STTModelWeights')

@@ -21,7 +21,7 @@ def recordAudio(max_duration, filename="./media/file_output.wav"):
     stream = audio.open(format=FORMAT, channels=CHANNELS,
                         rate=RATE, input=True,
                         frames_per_buffer=CHUNK)
-    print("recording...")
+    print(f"recording {filename} ...")
     frames = []
 
     for i in range(0, int(RATE / CHUNK * max_duration)):

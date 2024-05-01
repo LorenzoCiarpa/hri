@@ -134,3 +134,21 @@ def getLevelApi():
 
 if __name__ == '__main__':
     app.run(debug=True, use_reloader=False, port=5000)  # Run the server
+
+
+# @app.route('/api/loginUser', methods=['GET'])
+# def get_data():
+#     print("Entrato")
+#     return "ciao"
+#     # data = request.json  # Get JSON data sent to the server
+#     # return jsonify(data)  # Return JSON response
+
+# @app.route('/api/query')
+# def get_query():
+#     query = request.args.get('query')
+#     return f"ciao {query}"
+
+# @app.route('/api/data/<username>')
+# def get_username(username):
+#     print(f"Entrato {username}")
+#     return f"ciao {username}"
