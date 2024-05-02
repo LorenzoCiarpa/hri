@@ -115,6 +115,120 @@ class Robot():
         self.motion_service.setAngles("RElbowYaw", elbow_yaw_angle, fractionMaxSpeed)
 
         return
+
+    def greeting(self):
+        
+        
+        names = ["RShoulderPitch", "RShoulderRoll", "RElbowYaw", "RElbowRoll", "RWristYaw", "RHand"]
+
+        # Primo movimento: alza il braccio per iniziare il saluto
+        initial_angles = [math.radians(4.0), math.radians(-21.4), math.radians(69.0), math.radians(48.0), math.radians(-45.0), 0.9]
+        # initial_angles = [0.2, -0.3, 1.0, 0.5, 0.3]
+        self.motion_service.angleInterpolation(names, initial_angles, [1.0]*6, True)
+        
+        # Movimenti ripetuti del braccio
+        for i in range(6):  # Numero di scuotimenti
+            time.sleep(0.3)
+            if i % 2 == 0:
+                self.motion_service.setAngles("RElbowYaw", math.radians(50), 1.0)
+            else:
+                self.motion_service.setAngles("RElbowYaw", math.radians(75), 1.0)
+
+        # Riporta il braccio nella posizione neutra
+        neutral_angles = [1.4, 0.15, 1.0, 0.5, 0.3, 0.5]  # Posizione neutra per il braccio destro
+        self.motion_service.angleInterpolation(names, neutral_angles, [1.0]*6, True)
+
+        return
+
+    def exultation_right_arm(self):
+        names = ["RElbowRoll","RElbowYaw", "RHand", "RShoulderPitch", "RShoulderRoll", "RWristYaw"]
+        initial_angles = [math.radians(68.0), math.radians(70.0), 0.50, math.radians(26.0), math.radians(-2.0),  math.radians(17.2)]
+        
+        self.motion_service.angleInterpolation(names, initial_angles, [1.0]*6, True)
+
+
+        initial_angles = [math.radians(36.0), math.radians(70.0), 0.50, math.radians(-47.0), math.radians(-2.0),  math.radians(17.2)]
+        self.motion_service.angleInterpolation(names, initial_angles, [1.0]*6, True)
+
+        initial_angles = [math.radians(68.0), math.radians(70.0), 0.50, math.radians(26.0), math.radians(-2.0),  math.radians(17.2)]
+        self.motion_service.angleInterpolation(names, initial_angles, [1.0]*6, True)
+
+        initial_angles = [math.radians(36.0), math.radians(70.0), 0.50, math.radians(-47.0), math.radians(-2.0),  math.radians(17.2)]
+        self.motion_service.angleInterpolation(names, initial_angles, [1.0]*6, True)
+
+
+        return
+
+    def exultation_left_arm(self):
+        names = ["LElbowRoll","LElbowYaw", "LHand", "LShoulderPitch", "LShoulderRoll", "LWristYaw"]
+        initial_angles = [math.radians(-68.0), math.radians(-80.0), 0.50, math.radians(26.0), math.radians(2.0),  math.radians(17.0)]
+        
+        self.motion_service.angleInterpolation(names, initial_angles, [1.0]*6, True)
+
+
+        initial_angles = [math.radians(-36.0), math.radians(-80.0), 0.50, math.radians(-47.0), math.radians(2.0),  math.radians(17.0)]
+        self.motion_service.angleInterpolation(names, initial_angles, [1.0]*6, True)
+
+        initial_angles = [math.radians(-68.0), math.radians(-80.0), 0.50, math.radians(26.0), math.radians(2.0),  math.radians(17.0)]
+        self.motion_service.angleInterpolation(names, initial_angles, [1.0]*6, True)
+
+        initial_angles = [math.radians(-36.0), math.radians(-80.0), 0.50, math.radians(-47.0), math.radians(2.0),  math.radians(17.0)]
+        self.motion_service.angleInterpolation(names, initial_angles, [1.0]*6, True)
+
+
+        return
+
+    def exultation(self):
+        names = ["RElbowRoll","RElbowYaw", "RHand", "RShoulderPitch", "RShoulderRoll", "RWristYaw", "LElbowRoll","LElbowYaw", "LHand", "LShoulderPitch", "LShoulderRoll", "LWristYaw"]
+
+        initial_angles = [math.radians(68.0), math.radians(70.0), 0.50, math.radians(26.0), math.radians(-2.0),  math.radians(17.2), math.radians(-68.0), math.radians(-80.0), 0.50, math.radians(26.0), math.radians(2.0),  math.radians(17.0)]
+        self.motion_service.angleInterpolation(names, initial_angles, [0.7]*12, True)
+
+        initial_angles = [math.radians(36.0), math.radians(70.0), 0.50, math.radians(-47.0), math.radians(-2.0),  math.radians(17.2), math.radians(-36.0), math.radians(-80.0), 0.50, math.radians(-47.0), math.radians(2.0),  math.radians(17.0)]
+        self.motion_service.angleInterpolation(names, initial_angles, [0.7]*12, True)
+
+        initial_angles = [math.radians(68.0), math.radians(70.0), 0.50, math.radians(26.0), math.radians(-2.0),  math.radians(17.2), math.radians(-68.0), math.radians(-80.0), 0.50, math.radians(26.0), math.radians(2.0),  math.radians(17.0)]
+        self.motion_service.angleInterpolation(names, initial_angles, [0.7]*12, True)
+
+        # initial_angles = [math.radians(36.0), math.radians(70.0), 0.50, math.radians(-47.0), math.radians(-2.0),  math.radians(17.2), math.radians(-36.0), math.radians(-80.0), 0.50, math.radians(-47.0), math.radians(2.0),  math.radians(17.0)]
+        # self.motion_service.angleInterpolation(names, initial_angles, [0.7]*12, True)
+
+        return
+
+    def calm_stand(self):
+        names = ["RElbowRoll","RElbowYaw", "RHand", "RShoulderPitch", "RShoulderRoll", "RWristYaw", "LElbowRoll","LElbowYaw", "LHand", "LShoulderPitch", "LShoulderRoll", "LWristYaw"]
+
+        initial_angles = [math.radians(88.0), math.radians(86.0), 0.97, math.radians(26.0), math.radians(-2.0),  math.radians(-70.0), math.radians(-88.0), math.radians(-86.0), 0.97, math.radians(26.0), math.radians(2.0),  math.radians(70.0)]
+        self.motion_service.angleInterpolation(names, initial_angles, [0.7]*12, True)
+
+        # initial_angles = [math.radians(36.0), math.radians(70.0), 0.50, math.radians(-47.0), math.radians(-2.0),  math.radians(17.2), math.radians(-36.0), math.radians(-80.0), 0.50, math.radians(-47.0), math.radians(2.0),  math.radians(17.0)]
+        # self.motion_service.angleInterpolation(names, initial_angles, [0.7]*12, True)
+
+        # initial_angles = [math.radians(68.0), math.radians(70.0), 0.50, math.radians(26.0), math.radians(-2.0),  math.radians(17.2), math.radians(-68.0), math.radians(-80.0), 0.50, math.radians(26.0), math.radians(2.0),  math.radians(17.0)]
+        # self.motion_service.angleInterpolation(names, initial_angles, [0.7]*12, True)
+
+        # initial_angles = [math.radians(36.0), math.radians(70.0), 0.50, math.radians(-47.0), math.radians(-2.0),  math.radians(17.2), math.radians(-36.0), math.radians(-80.0), 0.50, math.radians(-47.0), math.radians(2.0),  math.radians(17.0)]
+        # self.motion_service.angleInterpolation(names, initial_angles, [0.7]*12, True)
+
+        return
+
+    def login(self):
+        
+        
+        names = ["RElbowRoll","RElbowYaw", "RHand", "RShoulderPitch", "RShoulderRoll", "RWristYaw"]
+
+        # Primo movimento: alza il braccio per iniziare il saluto
+        initial_angles = [math.radians(71.0), math.radians(12.0), 0.97, math.radians(57.0), math.radians(-14),  math.radians(104)]
+        # initial_angles = [0.2, -0.3, 1.0, 0.5, 0.3]
+        self.motion_service.angleInterpolation(names, initial_angles, [1.0]*6, True)
+        
+        time.sleep(5)
+
+        # Riporta il braccio nella posizione neutra
+        # neutral_angles = [1.4, 0.15, 1.0, 0.5, 0.3, 0.5]  # Posizione neutra per il braccio destro
+        # self.motion_service.angleInterpolation(names, neutral_angles, [1.0]*6, True)
+
+        return
     
     def countDown(self):
         self.say("Rest")
@@ -132,11 +246,24 @@ class Robot():
 
 if __name__ == "__main__":
 
-    robot = Robot(38259)
-    robot.say("Hello")
-    robot.countDown()
-    robot.shieldPosition()
-    robot.countDown()
-    robot.shootPosition()
-    robot.countDown()
-    robot.chargePosition()
+    robot = Robot(37497)
+    # robot.greeting()
+    # robot.login()
+    # robot.exultation_right_arm()
+    # robot.exultation_left_arm()
+    robot.exultation()
+    robot.calm_stand()
+    
+    # robot.say("Hello")
+    # robot.countDown()
+    # robot.shieldPosition()
+    # robot.countDown()
+    # robot.shootPosition()
+    # robot.countDown()
+    # robot.chargePosition()
+
+    print(math.degrees(0.2))
+    print(math.degrees(-0.3))
+    print(math.degrees(1))
+    print(math.degrees(0.5))
+    print(math.degrees(0.3))    
