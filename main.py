@@ -16,6 +16,7 @@ from Utils.constants import *
 from Robot.robotCommunicator import robotCommunicator
 from Knowledge.shoot import *
 from Memory.queries import *
+from Memory.shootQueries import *
 
 
 
@@ -30,6 +31,7 @@ async def handle_connection(websocket, path):
     selected_game=None
     user=None
     stop_playing=False
+    new_account=False
 
     while True:
 
@@ -48,16 +50,15 @@ async def handle_connection(websocket, path):
         print(f'status: {status}')
         if status == "HAND SHAKING":
             # Rispondi al messaggio
+            robotCommunicator.move("greeting") ##da fare prima questo per attirare l'attenzione
+            robotCommunicator.say("Do you wanna play?")
+
             response = json.dumps({
                 "action": "change_page",
                 "page": "want_play"
             })
             await websocket.send(response)
             await asyncio.sleep(0)
-
-            robotCommunicator.move("greeting") ##da fare prima questo per attirare l'attenzione
-            time.sleep(1)
-            robotCommunicator.say("Do you wanna play?")
 
             recordAudio(3, filename="./media/hand_shaking.wav")
             response=sentimentAnalysis.speech_to_text("./media/hand_shaking.wav")
@@ -76,6 +77,7 @@ async def handle_connection(websocket, path):
                 print("Waiting for the user to click on the screen...")
 
                 message = await websocket.recv()  # Aspetta un messaggio dal client
+                message = json.loads(message)
                 print(f"Received message: {message}")
 
                 if message['play']:
@@ -102,18 +104,23 @@ async def handle_connection(websocket, path):
         if status == "LOGGING":
 
             if user is None:
-                
-
-                robotCommunicator.move("boh qualcosa") ##da fare prima questo per attirare l'attenzione
-                time.sleep(1)
-                robotCommunicator.say("Insert your name?") #troppo difficile fare riconoscimento facciale
-            
-            # notify fe to change screen to login
-            response = json.dumps({
+                response = json.dumps({
                     "action": "change_page",
                     "page": "login"
-            })
-            await websocket.send(response)
+                })
+
+                await websocket.send(response)
+                await asyncio.sleep(0)
+
+                robotCommunicator.say("Insert your name") #troppo difficile fare riconoscimento facciale
+                robotCommunicator.move("login") ##da fare prima questo per attirare l'attenzione
+            
+            # notify fe to change screen to login
+            # response = json.dumps({
+            #         "action": "change_page",
+            #         "page": "login"
+            # })
+            # await websocket.send(response)
 
             # waiting socket to send username
             message = await websocket.recv()  # Aspetta un messaggio dal client
@@ -123,10 +130,9 @@ async def handle_connection(websocket, path):
             # eseguire funzioni di loginUser in webserver.py
             user=message['username']
             result = createUser(user)
-
-            if result['new_account'] is True:
+            new_account = result['new_account']
+            if new_account is True:
                 robotCommunicator.say("Welcome to the game, "+user)
-                robotCommunicator.say("You can play a game of shoot or tic tac toe")
             #ecc...
 
 
@@ -157,8 +163,16 @@ async def handle_connection(websocket, path):
             if selected_game == "tris":
                 # notify fe to change to tris page
                 #notify fe to change to choose game screen
-                robotCommunicator.say("Let's play tris!")
+                all_matches = getMatches(user)
+                print(all_matches)
+                if all_matches[0]['AI_wins'] is None and all_matches[0]['human_wins'] is None and all_matches[0]['draw'] is None:
+                    robotCommunicator.say("These are the rules of the game!")
+                    robotCommunicator.say("The game is played on a grid that's 3 squares by 3 squares.")
+                    robotCommunicator.say("You are the circle , me is cross. Players take turns putting their marks in empty squares.")
+                    robotCommunicator.say("The first player to get 3 of her marks in a row (up, down, across, or diagonally) is the winner.")
+                    robotCommunicator.say("When all 9 squares are full, the game is over. If no player has 3 marks in a row, the game ends in a draw.")
 
+                robotCommunicator.say("Let's play tris!")
                 response = json.dumps({
                         "action": "change_page",
                         "page": "tris"
@@ -172,7 +186,26 @@ async def handle_connection(websocket, path):
                 status="END GAME"
 
             if selected_game == "shoot":
-                robotCommunicator.say("Let's play shoot")
+                all_matches = getMatchesShoot(user)
+
+                if len(all_matches) == 0:
+                    robotCommunicator.say("These are the rules of the game!")
+                    robotCommunicator.say("Shotgun is a game similar to rock-paper-scissors but with the addition of some strategy, depth, and of course, guns! ")
+                    robotCommunicator.say("I will count from 3 to 0 and at the end we will make a move.")
+                    robotCommunicator.say("The moves are three:")
+                    robotCommunicator.move("only_shoot")
+                    robotCommunicator.say("Shoot, pointing you arm toward me you will use one of your bullet to make me lose a life")
+                    robotCommunicator.move("only_shield")
+                    robotCommunicator.say("Guard, folding your arm to your elbow you will prevent to lose a life if i would make a shoot move")
+                    robotCommunicator.move("only_charge")
+                    robotCommunicator.say("Reload, raising up you arm you will gain another bullet")
+                    robotCommunicator.say("We start with 3 lives and 2 bullets. When you make a shoot, you will use one bullet. You can't shoot if you haven't bullet")
+                    robotCommunicator.say("When one of us reaches 0 lives, the game ends and the other is the winner.")
+                    robotCommunicator.say("If none of us has reached 0 lives, the game continues with another move after the countdown.")
+                    robotCommunicator.say("If we reach both 0 lives  contemporaneously, the game ends in a draw.")
+                    
+                robotCommunicator.say("Let's play shotgun")
+                time.sleep(2)
 
                 shootgame=ShootGame(user)
                 shootgame.game()
@@ -204,9 +237,8 @@ async def handle_connection(websocket, path):
 
             if stop_playing:
 
-                robotCommunicator.move("salutare") ##da fare prima questo per attirare l'attenzione
-                time.sleep(1)
                 robotCommunicator.say("See you soon")
+                robotCommunicator.move("greeting") ##da fare prima questo per attirare l'attenzione
                 
                 status="SALUTANDO"
                 lets_play=False

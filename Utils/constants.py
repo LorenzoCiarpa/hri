@@ -1,3 +1,5 @@
+IP_ROBOT = '192.168.1.143'
+
 INTERMEDIATE_RATIO = 3
 PRO_RATIO = 5
 
@@ -32,7 +34,10 @@ EMOTION_RATE = {
     'sad': 1,
     'angry': 2,
     'neutral': 3,
-    'happy': 4
+    'happy': 4,
+    'surprise': 3,
+    'disgust': 3,
+    'fear': 3
 }
 
 MAX_ANGER_LEVEL = 3

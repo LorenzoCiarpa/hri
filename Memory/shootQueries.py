@@ -8,6 +8,7 @@ from Memory.dbConnection import cursor, dbConnection
 
 def setWinnerShoot(username, winner):
 
+
     # Eseguire una query
     query = '''
     INSERT ignore INTO shoot_match 
@@ -22,3 +23,21 @@ def setWinnerShoot(username, winner):
     return {
             'success': True
         }
+
+def getMatchesShoot(username):
+    # Eseguire una query
+    query = '''
+    SELECT 
+        *
+    FROM 
+        shoot_match
+    WHERE 
+        idUser = (SELECT idUser from user where username = %s);
+    '''
+    parametri = (username,)  # i parametri devono essere forniti in una tupla
+
+    cursor.execute(query, parametri)
+    # Ottenere i risultati
+    result = cursor.fetchall()
+
+    return result

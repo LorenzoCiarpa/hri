@@ -64,11 +64,7 @@ class ShootGame():
     def turn(self):
         aiMove = self.getAiMove()
 
-        socketMessage = {
-            'action': aiMove
-        }
-
-        robotCommunicator.move(socketMessage)
+        robotCommunicator.move(aiMove)
 
         humanMove = self.getHumanMove()
 
@@ -81,6 +77,9 @@ class ShootGame():
             'name': 'human',
             'move': humanMove
         }
+
+        if humanMove == 'shoot' and self.match['human'].bullets == 0:
+            robotCommunicator.say("Hey what are you doing? you can't shoot without bullets!")
         
         self.checkCharge(humanActor)
         self.checkCharge(aiActor)
@@ -88,13 +87,7 @@ class ShootGame():
         self.checkHit(humanActor, aiActor)
         self.checkHit(aiActor, humanActor)
 
-        if humanMove == 'shoot' and self.match['human'].bullets == 0:
-            socketMessage = {
-                'action': 'say',
-                'message': "Hey what are you doing? you can't shoot without bullets!"
-            }
-
-            robotCommunicator.say(socketMessage)
+        
 
         
         

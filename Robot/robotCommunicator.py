@@ -6,14 +6,16 @@ import json
 project_folder = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.append(project_folder)
 
+from Utils.constants import *
+
 class RobotCommunicator():
-    def __init__(self):
-        self.initSocket()
+    def __init__(self, ip = 'localhost', port = 12345):
+        self.initSocket(ip, port)
         return
     
-    def initSocket(self):
+    def initSocket(self, ip, port):
         self.client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        self.client_socket.connect(('localhost', 12345))  # Assicurati che la porta 12345 sia esposta dal Docker
+        self.client_socket.connect((ip, port))  # Assicurati che la porta 12345 sia esposta dal Docker
         return
 
     def closeSocketConnection(self):
@@ -49,4 +51,4 @@ class RobotCommunicator():
 
         return
     
-robotCommunicator = RobotCommunicator() 
+robotCommunicator = RobotCommunicator(ip=IP_ROBOT) 

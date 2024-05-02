@@ -67,13 +67,17 @@ class TrisInteractionHandler():
         action = ''
         if emotion_avg > 3.5 and winner == 'AI':
             #happy
-            action = "strong_exultation"
+            # action = "strong_exultation"
+            action = "exultation"
         elif emotion_avg > 2.5 and emotion_avg <= 3.5 and winner == 'AI':
             #neutral
             action = "exultation"
         elif emotion_avg > 1.5 and emotion_avg <= 2.5 and winner == 'AI':
             #angry
-            action = 'raise_hands'
+            action = 'calm_stand'
+        elif emotion_avg >= 1 and emotion_avg <= 1.5 and winner == 'AI':
+            #sad?
+            action = 'calm_stand'
     
 
         # message = ''
@@ -98,8 +102,8 @@ class TrisInteractionHandler():
             else:
                 message = "Another Draw..."
 
-        robotCommunicator.say(message)
         robotCommunicator.move(action)
+        robotCommunicator.say(message)
         print(message)
 
         return
