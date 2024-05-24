@@ -84,8 +84,13 @@ class ShootGame():
         self.checkCharge(humanActor)
         self.checkCharge(aiActor)
         
-        self.checkHit(humanActor, aiActor)
-        self.checkHit(aiActor, humanActor)
+        hit = self.checkHit(humanActor, aiActor)
+        if hit:
+            robotCommunicator.say("Oh no, you hit me!")
+
+        hit = self.checkHit(aiActor, humanActor)
+        if hit:
+            robotCommunicator.say("Yes, i got you!")
 
         
 
@@ -137,7 +142,8 @@ class ShootGame():
             self.match[attacker['name']].bullets -= 1
             if defender['move'] != 'shield':
                 self.match[defender['name']].life -= 1
-        return
+                return True
+        return False
     
 
 if __name__ == '__main__':
