@@ -147,6 +147,7 @@ async def handle_connection(websocket, path):
                     "page": "choose_game"
             })
             robotCommunicator.say("What game do you wanna play?")
+            robotCommunicator.move("start_position")
 
             await websocket.send(response)
 
