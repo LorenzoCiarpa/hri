@@ -7,7 +7,7 @@ from robot import *
 class RobotHandler():
     def __init__(self):
 
-        self.robot = Robot(port = 37497)
+        self.robot = Robot(port = 35643)
         return
     
     def handle_connection(self, client_socket, addr):
@@ -86,9 +86,14 @@ class RobotHandler():
 
         if data['action'] == 'exultation':
             self.robot.exultation()
+            self.robot.neutral_position()
 
         if data['action'] == 'calm_stand':
             self.robot.calm_stand()
+            self.robot.neutral_position()
+
+        if data['action'] == 'start_position':
+            self.robot.neutral_position()
 
 
         time.sleep(1)

@@ -31,8 +31,15 @@ class Robot():
         self.tts_service.setLanguage(language)
         self.tts_service.setParameter("speed", speed)
         self.tts_service.setVolume(volume)
-
         self.tts_service.say(sentence)
+
+        return
+
+    def neutral_position(self):
+        names = ["RShoulderPitch", "RShoulderRoll", "RElbowYaw", "RElbowRoll", "RWristYaw", "RHand", "LShoulderPitch", "LShoulderRoll", "LElbowYaw", "LElbowRoll", "LWristYaw", "LHand"]
+
+        neutral_angles = [1.4, 0.15, 1.0, 0.5, 0.3, 0.5, math.radians(101.7), math.radians(5.8), math.radians(-98.5), math.radians(101.7), math.radians(-6.3), math.radians(2.0), 0.69]  # Posizione neutra per il braccio destro
+        self.motion_service.angleInterpolation(names, neutral_angles, [1.0]*12, True)
 
         return
 
@@ -46,6 +53,9 @@ class Robot():
         elbow_roll_angle = math.radians(0.5)  # Angolo in radianti (esempio di angolo, sperimenta con valori diversi)
         elbow_yaw_angle = math.radians(87)  # Angolo in radianti (esempio di angolo, sperimenta con valori diversi)
 
+        # r_wrist_yaw = math.radians(-1.7)  # Angolo in radianti (esempio di angolo, sperimenta con valori diversi)
+        # r_hand = 0.70  # Angolo in radianti (esempio di angolo, sperimenta con valori diversi)
+
         fractionMaxSpeed = 0.5  # Velocita massima del movimento (da 0.0 a 1.0)
 
         # Settare gli angoli dei giunti
@@ -53,6 +63,8 @@ class Robot():
         self.motion_service.setAngles("RShoulderRoll", shoulder_roll_angle, fractionMaxSpeed)
         self.motion_service.setAngles("RElbowRoll", elbow_roll_angle, fractionMaxSpeed)
         self.motion_service.setAngles("RElbowYaw", elbow_yaw_angle, fractionMaxSpeed)
+        # self.motion_service.setAngles("RWristYaw", r_wrist_yaw, fractionMaxSpeed)
+        # self.motion_service.setAngles("RHand", r_hand, fractionMaxSpeed)
 
         return
 
@@ -134,7 +146,7 @@ class Robot():
             else:
                 self.motion_service.setAngles("RElbowYaw", math.radians(75), 1.0)
 
-        # Riporta il braccio nella posizione neutra
+        # # Riporta il braccio nella posizione neutra
         neutral_angles = [1.4, 0.15, 1.0, 0.5, 0.3, 0.5]  # Posizione neutra per il braccio destro
         self.motion_service.angleInterpolation(names, neutral_angles, [1.0]*6, True)
 
@@ -190,8 +202,8 @@ class Robot():
         initial_angles = [math.radians(68.0), math.radians(70.0), 0.50, math.radians(26.0), math.radians(-2.0),  math.radians(17.2), math.radians(-68.0), math.radians(-80.0), 0.50, math.radians(26.0), math.radians(2.0),  math.radians(17.0)]
         self.motion_service.angleInterpolation(names, initial_angles, [0.7]*12, True)
 
-        # initial_angles = [math.radians(36.0), math.radians(70.0), 0.50, math.radians(-47.0), math.radians(-2.0),  math.radians(17.2), math.radians(-36.0), math.radians(-80.0), 0.50, math.radians(-47.0), math.radians(2.0),  math.radians(17.0)]
-        # self.motion_service.angleInterpolation(names, initial_angles, [0.7]*12, True)
+        initial_angles = [math.radians(36.0), math.radians(70.0), 0.50, math.radians(-47.0), math.radians(-2.0),  math.radians(17.2), math.radians(-36.0), math.radians(-80.0), 0.50, math.radians(-47.0), math.radians(2.0),  math.radians(17.0)]
+        self.motion_service.angleInterpolation(names, initial_angles, [0.7]*12, True)
 
         return
 
@@ -246,15 +258,16 @@ class Robot():
 
 if __name__ == "__main__":
 
-    robot = Robot(37497)
+    robot = Robot(40231)
+    # robot.startPosition()
     # robot.greeting()
     # robot.login()
     # robot.exultation_right_arm()
     # robot.exultation_left_arm()
-    robot.exultation()
+    # robot.exultation()
     robot.calm_stand()
+    robot.say("Calm down! I will play softer!")
     
-    # robot.say("Hello")
     # robot.countDown()
     # robot.shieldPosition()
     # robot.countDown()
@@ -262,8 +275,8 @@ if __name__ == "__main__":
     # robot.countDown()
     # robot.chargePosition()
 
-    print(math.degrees(0.2))
-    print(math.degrees(-0.3))
-    print(math.degrees(1))
-    print(math.degrees(0.5))
-    print(math.degrees(0.3))    
+    # print(math.degrees(0.2))
+    # print(math.degrees(-0.3))
+    # print(math.degrees(1))
+    # print(math.degrees(0.5))
+    # print(math.degrees(0.3))    
